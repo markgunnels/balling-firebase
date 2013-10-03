@@ -11,9 +11,10 @@
   (html5 
    [:html
     [:head
+     (include-js "https://cdn.firebase.com/v0/firebase.js")
      (include-js "/js/main.js")
      ;; STEP ONE - Installing Firebase
-     (include-js "https://cdn.firebase.com/v0/firebase.js")]
+     ]
     [:body
      [:center
       (text-field {:id "message" :placeholder "Message"} "message")
