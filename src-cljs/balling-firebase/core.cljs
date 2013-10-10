@@ -1,37 +1,45 @@
 (ns balling-firebase.core
-  (:require [domina :refer [by-id value set-text!]]
-            [domina.events :refer [listen!]]))
+  (:require [domina :refer [by-id value append!]]
+            [goog.dom :as dom]
+            [goog.events.KeyHandler :as key-handler]
+            [goog.events :as events]
+            [hiccups.runtime :as hiccupsrt])
+  (:require-macros [hiccups.core :as hiccups]))
 
-(def messages (js/Firebase. "https://balling-firebase.firebaseio.com"))
+(def messages (js/Firebase. "YOUR FIREBASE URL"))
 
+(defn display-message
+  [new-data]
+  (let [mc (-> new-data
+               .val
+               js->clj)]
+    (append! (by-id "messages")
+             (hiccups/html [:div (str  (get mc "name")
+                                       " : " 
+                                       (get mc "message"))]))))
 
-;; // Add a callback that is triggered for each chat message.
-;;   messagesRef.limit (10).on ('child_added', function (snapshot) {
-;;     var message = snapshot.val ();
-;;     $ ('<div/>').text (message.text).prepend ($ ('<em/>')
-;;       .text (message.name+': ')).appendTo ($ ('#messagesDiv'));
-;;     $ ('#messagesDiv') [0].scrollTop = $ ('#messagesDiv') [0].scrollHeight; });
-
+(defn init-populate-messages-handler
+  []
+  (let [messages-query (.limit messages 10)]
+    (.on messages-query "child_added"
+         #(display-message %))))
 
 (defn add-message
-  [message]
-  (.push messages message))
+  []
+  (.push messages (clj->js {"name"  (value (by-id "nameInput"))
+                            "message" (value (by-id "messageInput"))})))
+
+(defn init-submit-message-handler
+ []
+ (events/listen (goog.events.KeyHandler. (dom/getDocument) true) "key"
+                #((let [id (.-id (.-target %))]
+                    (if (and (= id "messageInput")
+                             (= 13 (.-keyCode %)))
+               (add-message))))))
 
 (defn init
   []
-  (let [submit-button (by-id "submitMessage")
-        message-input (by-id "message")
-        messages-div (by-id "messages")
-        messages-query (.limit messages 10)]
-    (.on messages-query
-         "child_added"
-         (fn [snapshot]
-           (.log js/console "hello")
-           (.log js/console (.val snapshot))
-           (set-text! messages-div (.val snapshot))))
-    (listen! submit-button :click
-             (fn 
-               [evt] 
-               (add-message (value message-input))))))
+  (init-submit-message-handler)
+  (init-populate-messages-handler))
 
 (set! (.-onload js/window) init)

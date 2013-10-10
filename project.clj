@@ -2,8 +2,11 @@
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :dependencies [[org.clojure/clojure "1.5.1"]
+                 [org.clojure/clojurescript "0.0-1909"]
                  [compojure "1.1.5" :exclusions [ring/ring-core]]
-                 [domina "1.0.2-SNAPSHOT"]]
+                 [hiccup "1.0.4"]
+                 [domina "1.0.2-SNAPSHOT"]
+                 [hiccups "0.2.0"]]
   :plugins [[lein-ring "0.8.5"]
             [lein-cljsbuild "0.3.3"]]
   :ring {:handler balling-firebase.handler/app}

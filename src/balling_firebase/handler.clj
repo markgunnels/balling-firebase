@@ -1,6 +1,6 @@
 (ns balling-firebase.handler
-  (:use compojure.core)
-  (:require [compojure.handler :as handler]
+  (:require [compojure.core :refer :all]
+            [compojure.handler :as handler]
             [compojure.route :as route]
             [hiccup.core :refer :all]
             [hiccup.page :refer :all]
@@ -11,20 +11,16 @@
   (html5 
    [:html
     [:head
-     (include-js "https://cdn.firebase.com/v0/firebase.js")
-     (include-js "/js/main.js")
-     ;; STEP ONE - Installing Firebase
-     ]
+     (include-js "https://cdn.firebase.com/v0/firebase.js" "/js/main.js")
+     (include-css "https://www.firebase.com/css/example.css")]
     [:body
-     [:center
-      (text-field {:id "message" :placeholder "Message"} "message")
-      (submit-button {:id "submitMessage"} "Submit Message")
-      [:div {:id "messages"}]]]]))
+     [:div {:id "messages"}]
+     (text-field {:id "nameInput" :placeholder "Name"} "nameInput")
+     (text-field {:id "messageInput" :placeholder "Message..."} "messageInput")]]))
 
 (defroutes app-routes
   (GET "/" [] (home-page))
   (route/resources "/")
   (route/not-found "Not Found"))
 
-(def app
-  (handler/site app-routes))
+(def app (handler/site app-routes))
