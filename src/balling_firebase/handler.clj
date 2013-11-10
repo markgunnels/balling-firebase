@@ -11,12 +11,17 @@
   (html5 
    [:html
     [:head
-     (include-js "https://cdn.firebase.com/v0/firebase.js" "/js/main.js")
+     (include-js "https://cdn.firebase.com/v0/firebase.js" 
+                 "https://cdn.firebase.com/v0/firebase-simple-login.js"
+                 "/js/main.js")
      (include-css "https://www.firebase.com/css/example.css")]
     [:body
+     [:button {:id "login"} "Login"]
      [:div {:id "messages"}]
-     (text-field {:id "nameInput" :placeholder "Name"} "nameInput")
-     (text-field {:id "messageInput" :placeholder "Message..."} "messageInput")]]))
+     [:div {:id "entry"}
+      (text-field {:id "nameInput" :placeholder "Name"} "nameInput")
+      (text-field {:id "messageInput" :placeholder "Message..."} "messageInput")]
+     ]]))
 
 (defroutes app-routes
   (GET "/" [] (home-page))

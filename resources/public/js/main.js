@@ -18315,7 +18315,7 @@ goog.events.KeyEvent = function(a, b, c, d) {
 };
 goog.inherits(goog.events.KeyEvent, goog.events.BrowserEvent);
 var balling_firebase = {core:{}};
-balling_firebase.core.messages = new Firebase("YOUR FIREBASE URL");
+balling_firebase.core.messages = new Firebase("https://balling-ironman.firebaseio.com/");
 balling_firebase.core.display_message = function(a) {
   var b = cljs.core.js__GT_clj.call(null, a.val());
   return domina.append_BANG_.call(null, domina.by_id.call(null, "messages"), "" + cljs.core.str(function() {
@@ -18338,8 +18338,33 @@ balling_firebase.core.init_submit_message_handler = function() {
     return(a ? balling_firebase.core.add_message.call(null) : null).call(null)
   })
 };
+balling_firebase.core.display_entry_and_login = function(a, b) {
+  goog.style.showElement(domina.by_id.call(null, "entry"), a);
+  return goog.style.showElement(domina.by_id.call(null, "login"), b)
+};
+balling_firebase.core.handle_firebase_simple_login_user_not_present = function() {
+  return balling_firebase.core.display_entry_and_login.call(null, !1, !0)
+};
+balling_firebase.core.handle_firebase_simple_login_user_present = function(a) {
+  console.log(a);
+  balling_firebase.core.display_entry_and_login.call(null, !0, !1);
+  return goog.dom.getElement("nameInput").value = a.name
+};
+balling_firebase.core.handle_firebase_simple_login_error = function(a) {
+  return console.log(a)
+};
+balling_firebase.core.simple_login_auth_handler = function(a, b) {
+  return cljs.core.truth_(a) ? balling_firebase.core.handle_firebase_simple_login_error.call(null, a) : cljs.core.truth_(b) ? balling_firebase.core.handle_firebase_simple_login_user_present.call(null, b) : new cljs.core.Keyword(null, "else", "else", 1017020587) ? balling_firebase.core.handle_firebase_simple_login_user_not_present.call(null) : null
+};
+balling_firebase.core.init_login_auth_handler = function() {
+  var a = new FirebaseSimpleLogin(balling_firebase.core.messages, balling_firebase.core.simple_login_auth_handler);
+  return goog.events.listen(domina.by_id.call(null, "login"), goog.events.EventType.CLICK, function() {
+    return a.login("facebook")
+  })
+};
 balling_firebase.core.init = function() {
   balling_firebase.core.init_submit_message_handler.call(null);
-  return balling_firebase.core.init_populate_messages_handler.call(null)
+  balling_firebase.core.init_populate_messages_handler.call(null);
+  return balling_firebase.core.init_login_auth_handler.call(null)
 };
 window.onload = balling_firebase.core.init;
